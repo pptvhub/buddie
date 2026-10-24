@@ -1,4 +1,5 @@
-
+import argparse
+import sys
 
 def download_thumb(url, target):
     if not url or not url.startswith("https://"):
