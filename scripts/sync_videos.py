@@ -17,13 +17,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 
 API = os.getenv("WORDPRESS_API", "https://baddiehub.com/wp-json/wp/v2/posts")
 DATA = Path("assets/data/videos.json")
 THUMBS = Path("assets/thumb")
-USER_AGENT = "Mozilla/5.0 (compatible; VideoCatalogSync/2.0)"
-REQUEST_TIMEOUT = 15
+USER_AGENT = "Mozilla/5.0 (compatible; VideoCatalogSync/2.1)"
+REQUEST_TIMEOUT = 45
+MAX_RETRIES = 6
+RETRY_BASE_DELAY = 2
 MAX_THUMB_BYTES = 8 * 1024 * 1024
 PER_PAGE = 100
 
@@ -33,12 +35,29 @@ def log(message):
 
 
 def fetch(url, timeout=REQUEST_TIMEOUT):
-    req = Request(url, headers={
-        "User-Agent": USER_AGENT,
-        "Accept": "text/html,application/json,*/*",
-    })
-    with urlopen(req, timeout=timeout) as response:
-        return response.read(), response.headers.get("Content-Type", "")
+    """Fetch URL with retries for transient network/server failures."""
+    last_error = None
+    for attempt in range(MAX_RETRIES + 1):
+        req = Request(url, headers={
+            "User-Agent": USER_AGENT,
+            "Accept": "text/html,application/json,*/*",
+            "Connection": "close",
+        })
+        try:
+            with urlopen(req, timeout=timeout) as response:
+                return response.read(), response.headers.get("Content-Type", "")
+        except HTTPError as error:
+            last_error = error
+            if error.code not in (408, 425, 429, 500, 502, 503, 504):
+                raise
+        except (URLError, TimeoutError, OSError) as error:
+            last_error = error
+        if attempt >= MAX_RETRIES:
+            break
+        delay = min(RETRY_BASE_DELAY * (2 ** attempt), 30)
+        log(f"Request failed (attempt {attempt + 1}/{MAX_RETRIES + 1}); retrying in {delay}s: {url} — {last_error}")
+        time.sleep(delay)
+    raise RuntimeError(f"Request failed after {MAX_RETRIES + 1} attempts: {url}; {last_error}") from last_error
 
 
 def decode_url(video):
@@ -64,10 +83,10 @@ def meta(content, key):
     escaped_key = re.escape(key)
     pattern = r"<meta\b(?=[^>]*\b(?:itemprop|property|name)\s*=\s*[\"']" + escaped_key + r"[\"'])[^>]*>"
     for tag in re.findall(pattern, content, flags=re.I):
-        match = re.search(r"""\bcontent\s*=\s*["']([^"']+)["']""", tag, flags=re.I)
+        match = re.search(r"""\bcontent\s*=\s*[\"']([^\"']+)[\"']""", tag, flags=re.I)
         if match:
             return html.unescape(match.group(1)).strip()
-    match = re.search(r"""["']""" + escaped_key + r"""["']\s*:\s*["']([^"']+)["']""", content, flags=re.I)
+    match = re.search(r"""[\"']""" + escaped_key + r"""[\"']\s*:\s*[\"']([^\"']+)[\"']""", content, flags=re.I)
     return html.unescape(match.group(1)).strip() if match else ""
 
 
@@ -75,11 +94,7 @@ def find_video_url(content):
     value = meta(content, "contentUrl")
     if direct_mp4(value):
         return value
-    candidates = re.findall(
-        r"""https?://[^"'\s<>\\]+?\.mp4(?:\?[^"'\s<>\\]*)?""",
-        content,
-        flags=re.I,
-    )
+    candidates = re.findall(r"""https?://[^\"'\s<>\\]+?\.mp4(?:\?[^\"'\s<>\\]*)?""", content, flags=re.I)
     for value in candidates:
         value = html.unescape(value).replace("\\/", "/").rstrip("),;")
         if direct_mp4(value):
@@ -98,12 +113,10 @@ def parse_post(post):
     except Exception as error:
         log(f"SKIP fetch {link}: {error}")
         return None
-
     video_url = find_video_url(page)
     if not video_url:
         log(f"NO MP4 found: {link}")
         return None
-
     title_html = (post.get("title") or {}).get("rendered") or post.get("slug") or "Untitled"
     title = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", title_html))).strip()
     thumb = meta(page, "og:image") or meta(page, "thumbnailUrl")
@@ -112,84 +125,44 @@ def parse_post(post):
         if media:
             thumb = media[0].get("source_url", "")
     date = meta(page, "uploadDate") or post.get("date_gmt") or post.get("date") or ""
-    return {
-        "source_id": str(post.get("id", "")),
-        "title": title,
-        "video_url": video_url,
-        "thumb_url": thumb,
-        "date": date,
-        "link": link,
-    }
+    return {"source_id": str(post.get("id", "")), "title": title, "video_url": video_url,
+            "thumb_url": thumb, "date": date, "link": link}
 
 
 def get_posts(full_scan):
-    """Fetch posts newest-first, using WordPress pagination headers."""
+    """Fetch posts newest-first, retrying transient failures per page."""
     page_number = 1
     selected = 0
-    total_pages = None
     while True:
-        url = (
-            f"{API}?per_page={PER_PAGE}&page={page_number}"
-            "&_embed=1&orderby=date&order=desc"
-        )
-        log(f"Fetching WordPress API page {page_number}"
-            + (f"/{total_pages}" if total_pages else "") + "...")
-        req = Request(url, headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/json,*/*",
-        })
+        url = f"{API}?per_page={PER_PAGE}&page={page_number}&_embed=1&orderby=date&order=desc"
+        log(f"Fetching WordPress API page {page_number}...")
         try:
-            with urlopen(req, timeout=REQUEST_TIMEOUT) as response:
-                raw = response.read()
-                header_total = response.headers.get("X-WP-TotalPages")
-        except Exception as error:
-            raise RuntimeError(
-                f"WordPress API request failed on page {page_number}; "
-                "catalog was not updated. "
-                f"Details: {error}"
-            ) from error
-
-        try:
+            raw, _ = fetch(url, timeout=REQUEST_TIMEOUT)
             posts = json.loads(raw)
         except Exception as error:
-            raise RuntimeError(f"Invalid WordPress API JSON on page {page_number}") from error
+            raise RuntimeError(f"WordPress API request failed on page {page_number}; catalog was not updated. Details: {error}") from error
         if not isinstance(posts, list):
             raise RuntimeError(f"Unexpected WordPress API response on page {page_number}")
-        if page_number == 1:
-            if header_total and header_total.isdigit():
-                total_pages = int(header_total)
-                log(f"WordPress reports {total_pages} page(s), up to {total_pages * PER_PAGE} posts.")
-            else:
-                log("WordPress did not provide X-WP-TotalPages; will continue until an empty page.")
         if not posts:
             break
-
         for post in posts:
             yield post
             selected += 1
             if not full_scan and selected >= 100:
                 return
-
         if not full_scan and selected >= 100:
             return
-        if total_pages is not None and page_number >= total_pages:
-            break
         if len(posts) < PER_PAGE:
             break
         page_number += 1
-        time.sleep(0.1)
+        time.sleep(0.25)
 
 
 def encode_url(url, video_id):
     # Keep the catalog's existing URL encoding format.
     iv = f"HYL{video_id.replace('video', '')}{base64.b32encode(os.urandom(4)).decode('ascii')[:6]}"
     encoded = "".join(chr(ord(c) ^ ord(iv[i % len(iv)])) for i, c in enumerate(url))[::-1]
-    return {
-        "provider": "videy",
-        "encrypted": base64.b64encode(encoded.encode("latin1")).decode("ascii"),
-        "iv": iv,
-        "ver": 1,
-    }
+    return {"provider": "videy", "encrypted": base64.b64encode(encoded.encode("latin1")).decode("ascii"), "iv": iv, "ver": 1}
 
 
 def download_thumb(url, target):
@@ -219,42 +192,28 @@ def download_thumb(url, target):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--full", action="store_true",
-                        help="scan every WordPress post (use for initial import)")
+    parser.add_argument("--full", action="store_true", help="scan every WordPress post (use for initial import)")
     args = parser.parse_args()
-
     log("Sync script started.")
     log(f"Mode: {'FULL import' if args.full else 'recent 100 posts'}")
     log(f"Catalog path: {DATA}; exists: {DATA.exists()}")
     if not DATA.exists():
         raise RuntimeError(f"Missing catalog file: {DATA}")
-
     db = json.loads(DATA.read_text(encoding="utf-8"))
     if not isinstance(db, dict) or not isinstance(db.get("videos"), list):
         raise RuntimeError("Catalog JSON must contain a videos array.")
-
     videos = db["videos"]
     known_urls = {decode_url(v.get("video", {})) for v in videos if isinstance(v, dict)}
     known_urls.discard("")
-    known_source_ids = {
-        str(v.get("source", {}).get("site_id", ""))
-        for v in videos
-        if isinstance(v, dict) and isinstance(v.get("source"), dict)
-    }
+    known_source_ids = {str(v.get("source", {}).get("site_id", "")) for v in videos
+                        if isinstance(v, dict) and isinstance(v.get("source"), dict)}
     known_source_ids.discard("")
-    numeric_ids = [
-        int(match.group(1))
-        for video in videos
-        if (match := re.fullmatch(r"video(\d+)", str(video.get("id", ""))))
-    ]
+    numeric_ids = [int(match.group(1)) for video in videos if isinstance(video, dict)
+                   and (match := re.fullmatch(r"video(\d+)", str(video.get("id", ""))))]
     next_num = max(numeric_ids or [0]) + 1
-
     posts = list(get_posts(args.full))
     log(f"Posts selected for scan: {len(posts)}")
-    additions = []
-    seen_new_urls = set()
-    seen_new_source_ids = set()
-
+    additions, seen_new_urls, seen_new_source_ids = [], set(), set()
     for index, post in enumerate(posts, start=1):
         source_id = str(post.get("id", ""))
         if source_id and (source_id in known_source_ids or source_id in seen_new_source_ids):
@@ -270,7 +229,6 @@ def main():
             if source_id:
                 seen_new_source_ids.add(source_id)
             continue
-
         video_id = f"video{next_num:03d}"
         thumb_path = THUMBS / f"{video_id}.webp"
         if not download_thumb(item["thumb_url"], thumb_path):
@@ -280,27 +238,22 @@ def main():
                 pass
             log(f"SKIP no usable thumbnail: {item['title']}")
             continue
-
-        additions.append({
-            "id": video_id,
-            "title": item["title"] or f"Video {next_num}",
-            "thumb": f"assets/thumb/{video_id}.webp",
-            "views": "—",
-            "duration": "",
-            "video": encode_url(video_url, video_id),
-            "source": {"site_id": item["source_id"], "url": item["link"], "date": item["date"]},
-        })
+        additions.append({"id": video_id, "title": item["title"] or f"Video {next_num}",
+                          "thumb": f"assets/thumb/{video_id}.webp", "views": "—", "duration": "",
+                          "video": encode_url(video_url, video_id),
+                          "source": {"site_id": item["source_id"], "url": item["link"], "date": item["date"]}})
         known_urls.add(video_url)
         if source_id:
             seen_new_source_ids.add(source_id)
         next_num += 1
         log(f"FOUND new video: {item['title']}")
-
     if additions:
         db["videos"] = additions + videos
         db["version"] = str(db.get("version", "1.3"))
         db["updated"] = datetime.now(timezone.utc).isoformat()
-        DATA.write_text(json.dumps(db, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temp_path = DATA.with_suffix(DATA.suffix + ".tmp")
+        temp_path.write_text(json.dumps(db, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temp_path.replace(DATA)
     log(f"New MP4 videos added: {len(additions)}")
     log("Sync script finished.")
 
