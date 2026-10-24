@@ -1,0 +1,61 @@
+name: Sync WordPress Videos
+
+on:
+  workflow_dispatch:
+    inputs:
+      sync_mode:
+        description: "Use full for the initial import of all posts"
+        required: true
+        type: choice
+        options:
+          - recent
+          - full
+        default: recent
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-wordpress-videos
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install Pillow
+
+      - name: Sync videos
+        env:
+          SYNC_MODE: ${{ github.event.inputs.sync_mode || 'recent' }}
+        run: |
+          echo "Sync mode: $SYNC_MODE"
+          if [[ "$SYNC_MODE" == "full" ]]; then
+            python -u scripts/sync_videos.py --full
+          else
+            python -u scripts/sync_videos.py
+          fi
+
+      - name: Commit changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/data/videos.json assets/thumb
+            git commit -m "Sync WordPress videos"
+            git push
+          else
+            echo "No changes to commit"
+          fi
