@@ -1,7 +1,187 @@
 {
   "version": "1.3",
-  "updated": "2026-11-12T17:42:19.434500+00:00",
+  "updated": "2026-11-13T18:34:11.533877+00:00",
   "videos": [
+    {
+      "id": "video335",
+      "title": "vaeak",
+      "thumb": "assets/thumb/video335.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "bDskbHUvVFZSOnYlNyhnIDEsUFpXKDgqdiUtIWtrD0BDOC0g",
+        "iv": "HYL335DDBIKX",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76973",
+        "url": "https://baddiehub.com/vaeak/",
+        "date": "2026-11-13T15:41:48+00:00"
+      }
+    },
+    {
+      "id": "video336",
+      "title": "Jada Fire",
+      "thumb": "assets/thumb/video336.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "ficmYS4hUlpSBnYlJTRlLTQsU1pXKDgqZDkvLG5rDEBDOC0g",
+        "iv": "HYL336DAOKWJ",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76970",
+        "url": "https://baddiehub.com/jada-fire/",
+        "date": "2026-11-13T15:41:44+00:00"
+      }
+    },
+    {
+      "id": "video337",
+      "title": "Jhonie",
+      "thumb": "assets/thumb/video337.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "eSYmb38CBwsEdHYlIjVlIz9aUlpXKDgqYzgvImUdDUBDOC0g",
+        "iv": "HYL3372JAKVM",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76967",
+        "url": "https://baddiehub.com/jhonie-13/",
+        "date": "2026-11-13T15:41:39+00:00"
+      }
+    },
+    {
+      "id": "video338",
+      "title": "Puteria",
+      "thumb": "assets/thumb/video338.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "B0M9eWljCgYKenYlXFB+NSQ5XVpXKDgqHV00NH5+AkBDOC0g",
+        "iv": "HYL338QQWP33",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76955",
+        "url": "https://baddiehub.com/puteria/",
+        "date": "2026-11-13T15:41:34+00:00"
+      }
+    },
+    {
+      "id": "video339",
+      "title": "Alanna Pow",
+      "thumb": "assets/thumb/video339.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "bAV7ZXt5CAUHfHYlNzYYKT4mXFpXKDgqdjtSKGRhA0BDOC0g",
+        "iv": "HYL339NKK6UX",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76961",
+        "url": "https://baddiehub.com/alanna-pow-50/",
+        "date": "2026-11-13T15:41:29+00:00"
+      }
+    },
+    {
+      "id": "video340",
+      "title": "Veronica Perasso",
+      "thumb": "assets/thumb/video340.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "bCZZZ213CQAEfXYlNzUaKywtVV1XKDgqdjhQKnZqCkdDOC0g",
+        "iv": "HYL340EYI4VX",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76958",
+        "url": "https://baddiehub.com/veronica-perasso-8/",
+        "date": "2026-11-13T15:41:23+00:00"
+      }
+    },
+    {
+      "id": "video341",
+      "title": "KyRiches & Smoove",
+      "thumb": "assets/thumb/video341.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "YkI1fnFxAAIHenYlOVF2MjArVF1XKDgqeFw8M2psC0dDOC0g",
+        "iv": "HYL341CEPX2V",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76964",
+        "url": "https://baddiehub.com/kyriches-smoove/",
+        "date": "2026-11-13T15:41:17+00:00"
+      }
+    },
+    {
+      "id": "video342",
+      "title": "Aaliyah Yasin",
+      "thumb": "assets/thumb/video342.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "ejMpGzY0RQRVLXYlISBqVzcvV11XKDgqYC0gVm1oCEdDOC0g",
+        "iv": "HYL342GB5DCN",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76949",
+        "url": "https://baddiehub.com/aaliyah-yasin-4/",
+        "date": "2026-11-13T15:41:07+00:00"
+      }
+    },
+    {
+      "id": "video343",
+      "title": "Yinyleon",
+      "thumb": "assets/thumb/video343.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "YTcnYn5lR1VbO3YlOiRkLj44Vl1XKDgqeykuL2R/CUdDOC0g",
+        "iv": "HYL343PKLJGU",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76946",
+        "url": "https://baddiehub.com/yinyleon-41/",
+        "date": "2026-11-13T15:41:02+00:00"
+      }
+    },
+    {
+      "id": "video344",
+      "title": "thatpawg",
+      "thumb": "assets/thumb/video344.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "ZkZeeyg5REBbOHYlPVUdNzomUV1XKDgqfFhXNmBhDkdDOC0g",
+        "iv": "HYL344NOU36R",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "76952",
+        "url": "https://baddiehub.com/thatpawg/",
+        "date": "2026-11-13T15:40:56+00:00"
+      }
+    },
     {
       "id": "video325",
       "title": "Juicy Tee",
