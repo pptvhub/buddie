@@ -1,7 +1,187 @@
 {
   "version": "1.3",
-  "updated": "2026-11-26T15:49:40.010169+00:00",
+  "updated": "2026-11-27T18:46:53.138897+00:00",
   "videos": [
+    {
+      "id": "video475",
+      "title": "Xoli Mfeka",
+      "thumb": "assets/thumb/video475.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "AzklHQMvWVhMOHYlWCpmUUEuUF5QKDgqGScsUBtpD0REOC0g",
+        "iv": "HYL475F43HI7",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77413",
+        "url": "https://baddiehub.com/xoli-mfeka-12/",
+        "date": "2026-11-27T15:26:38+00:00"
+      }
+    },
+    {
+      "id": "video476",
+      "title": "Kash",
+      "thumb": "assets/thumb/video476.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "AkckamN1BQUEfXYlWVRnJiYrU15QKDgqGFktJ3xsDEREOC0g",
+        "iv": "HYL476CSDI76",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77410",
+        "url": "https://baddiehub.com/kash-26/",
+        "date": "2026-11-27T15:26:33+00:00"
+      }
+    },
+    {
+      "id": "video477",
+      "title": "Slobhouse",
+      "thumb": "assets/thumb/video477.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "ZTxZZGB8AAEBdHYlPi8aKCAiUl5QKDgqfyJQKXplDUREOC0g",
+        "iv": "HYL477JUJ4LQ",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77407",
+        "url": "https://baddiehub.com/slobhouse-3/",
+        "date": "2026-11-27T15:26:27+00:00"
+      }
+    },
+    {
+      "id": "video478",
+      "title": "HTX",
+      "thumb": "assets/thumb/video478.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "fj0if2QBDA4NeXYlJS5hMyJcXV5QKDgqZCMrMngbAkREOC0g",
+        "iv": "HYL4784WQOMJ",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77401",
+        "url": "https://baddiehub.com/htx-28/",
+        "date": "2026-11-27T15:26:22+00:00"
+      }
+    },
+    {
+      "id": "video479",
+      "title": "Taliya",
+      "thumb": "assets/thumb/video479.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "ZSJbYHtxDwINdHYlPjEYLDsrXF5QKDgqfzxSLWFsA0REOC0g",
+        "iv": "HYL479CNN6RQ",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77398",
+        "url": "https://baddiehub.com/taliya-28/",
+        "date": "2026-11-27T15:26:17+00:00"
+      }
+    },
+    {
+      "id": "video480",
+      "title": "Ellie Nova",
+      "thumb": "assets/thumb/video480.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "bD44fH5gCQoFeXYlNy17MDMwVVFQKDgqdiAxMWl3CktEOC0g",
+        "iv": "HYL480XFRUNX",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77395",
+        "url": "https://baddiehub.com/ellie-nova-9/",
+        "date": "2026-11-27T15:26:12+00:00"
+      }
+    },
+    {
+      "id": "video481",
+      "title": "Nixlynka",
+      "thumb": "assets/thumb/video481.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "czU/flRsB0BdInYlKCZ8MkA9VFFQKDgqaSs2Mxp6C0tEOC0g",
+        "iv": "HYL481U5PREG",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77392",
+        "url": "https://baddiehub.com/nixlynka-5/",
+        "date": "2026-11-27T15:26:08+00:00"
+      }
+    },
+    {
+      "id": "video482",
+      "title": "Kitty & Cyn",
+      "thumb": "assets/thumb/video482.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "fEM3ajs6DkZMXQd2JVw5ajc2JVdRUCg4Kh00IDZsYghLRDgtIA==",
+        "iv": "HYL482MCUDZ3",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77389",
+        "url": "https://baddiehub.com/kitty-cyn/",
+        "date": "2026-11-27T15:26:02+00:00"
+      }
+    },
+    {
+      "id": "video483",
+      "title": "Hannah Jo",
+      "thumb": "assets/thumb/video483.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "cjlZfjhgC2hVBHYlKSoaMj04VlFQKDgqaCdQM2d/CUtEOC0g",
+        "iv": "HYL483PHP4IF",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77386",
+        "url": "https://baddiehub.com/hannah-jo-21/",
+        "date": "2026-11-27T15:25:57+00:00"
+      }
+    },
+    {
+      "id": "video484",
+      "title": "Sisi Rose",
+      "thumb": "assets/thumb/video484.webp",
+      "views": "—",
+      "duration": "",
+      "video": {
+        "provider": "videy",
+        "encrypted": "Z0ZaYQpmDAgFf3YlPFUZLUY/UVFQKDgqfVhTLBx4DktEOC0g",
+        "iv": "HYL484W3O76S",
+        "ver": 1
+      },
+      "source": {
+        "site_id": "77404",
+        "url": "https://baddiehub.com/sisi-rose-18/",
+        "date": "2026-11-27T15:25:49+00:00"
+      }
+    },
     {
       "id": "video465",
       "title": "Rayne Carter",
